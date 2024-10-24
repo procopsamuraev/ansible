@@ -6,10 +6,10 @@
     reboot_timeout: 600
 
 - name: Update grub
-  ansible.builtin.command: 
+  ansible.builtin.command:
     cmd: >
       /usr/sbin/update-grub
 
 
 - name: Reload udev
-  shell: udevadm control --reload-rules && udevadm trigger
+  ansible.builtin.shell: udevadm control --reload-rules && udevadm trigger
