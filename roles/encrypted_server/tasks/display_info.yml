@@ -1,0 +1,26 @@
+# tasks/display_info.yml
+
+- name: Display CPU information
+  debug:
+    msg: 
+      - "Host has processor: {{ hostvars[inventory_hostname].ansible_processor }}"
+      - "with total cores: {{ hostvars[inventory_hostname].ansible_processor_cores }}"
+      - "with threads per core: {{ hostvars[inventory_hostname].ansible_processor_threads_per_core }}"
+      - "cpu governor: {{ cpu_governor_true.stdout}}"
+
+- name: Display Network information
+  debug:
+    msg: 
+      - "Inteface {{ new_interface_name}} - alias {{ hostvars[inventory_hostname].ansible_default_ipv4.alias }}" 
+      - "IP: {{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
+      - "NETMASK: {{ hostvars[inventory_hostname].ansible_default_ipv4.netmask}}"
+      - "MAC: {{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress}}"
+
+- name: Display encrypted disks information
+  debug:
+    msg: 
+      - Encrypted partitions: "{{ luks_partitions.stdout}}"
+
+# - name: Print all available facts
+#   ansible.builtin.debug:
+#     var: ansible_facts

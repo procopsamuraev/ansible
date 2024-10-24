@@ -1,0 +1,6 @@
+# playbooks/prepare_server.yml
+- hosts: all
+  #become: yes
+  #become_user: root
+  roles:
+    - encrypted_server

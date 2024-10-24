@@ -1,0 +1,15 @@
+# handlers/main.yml
+- name: Reboot system
+  ansible.builtin.reboot:
+    msg: "Rebooting for changes to take effect"
+    connect_timeout: 5
+    reboot_timeout: 600
+
+- name: Update grub
+  ansible.builtin.command: 
+    cmd: >
+      /usr/sbin/update-grub
+
+
+- name: Reload udev
+  shell: udevadm control --reload-rules && udevadm trigger
