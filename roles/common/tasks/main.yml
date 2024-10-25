@@ -1,0 +1,4 @@
+# common/tasks/main.yml
+- include_tasks: set_cpu.yml
+- include_tasks: rename_interface.yml
+- include_tasks: display_info.yml

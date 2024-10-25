@@ -1,0 +1,25 @@
+# common/handlers/main.yml
+- name: Reboot system
+  ansible.builtin.reboot:
+    msg: "Rebooting for changes to take effect"
+    connect_timeout: 5
+    reboot_timeout: 600
+
+- name: Update grub
+  ansible.builtin.command:
+    cmd: /usr/sbin/update-grub
+  register: update_grubs_status
+  changed_when: update_grub_status !=0
+
+- name: Check cstate on grub.cfg
+  ansible.builtin.lineinfile:
+    line: "processor.max_cstate=1 intel_idle.max_cstate=0"
+    dest: boot/grub/grub.cfg
+  check_mode: true
+  register: presense_cstate
+  failed_when: presense_cstate.changed
+
+- name: Reload udel
+  ansible.builtin.shell: udevadm control --reload-rules && udevadm trigger
+  register: reload_udev_status
+  changed_when: reload_udev_status !=0

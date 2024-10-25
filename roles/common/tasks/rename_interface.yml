@@ -1,4 +1,4 @@
-# tasks/rename_interface.yml
+# common/tasks/rename_interface.yml
 - name: Update udev rules config
   template:
     src: udev-net-rule.j2
@@ -8,18 +8,18 @@
 
 - name: Check if interface exists
   ansible.builtin.shell: >
-    ip link show dev {{ new_interface_name}}
+    ip link show dev {{ common_new_iface_name}}
   register: verification
   changed_when: verification.rc == 1
   ignore_errors: true
 
 - name: Rename network interface
   ansible.builtin.shell: >
-    ip link set dev {{ interface_name }} down && ip link set dev {{ interface_name }} name {{ new_interface_name }} && ip link set dev {{ new_interface_name }} up
+    ip link set dev {{ iface_name }} down && ip link set dev {{ iface_name }} name {{ common_new_iface_name }} && ip link set dev {{ common_newiface_name }} up
   register: rename_result
   when: verification is changed
 
 # - name: Show renamed interface information
-#   ansible.builtin.command: ip addr show dev {{ new_interface_name }}
+#   ansible.builtin.command: ip addr show dev {{ common_new_iface_name }}
 #   register: interface_info
 

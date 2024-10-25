@@ -3,4 +3,5 @@
   #become: yes
   #become_user: root
   roles:
-    - encrypted_server
+    - encrypted
+    - common
