@@ -1,0 +1,2 @@
+# encrypted/tasks/main.yml
+- include_tasks: encrypt_disks.yml

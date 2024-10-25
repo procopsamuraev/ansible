@@ -1,0 +1,7 @@
+# common/defaults/main.yml
+encrypted_disk: "/dev/sdb"           # disk to be encrypted
+encrypted_disk_key: "oxK0CdENG1PgAZfAgEMSBw==" # it shouldnt be here
+encrypted_disk_mount: "/mnt/encrypted_disk"    # Mount point for encrypted partition
+encrypted_partition: "/dev/loop10"       # Partition next to root to be encrypted
+encrypted_partition_key: "oxK0CdENG1PgAZfAgEMSBw=="  # it shouldnt be here
+encrypted_partition_mount: "/mnt/encrypted_partition"    # Mount point for encrypted partition

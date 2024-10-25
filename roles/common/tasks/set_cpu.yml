@@ -1,4 +1,4 @@
-# tasks/set_cpu.yml
+# common/tasks/set_cpu.yml
 - name: Disable cstate in grub default
   ansible.builtin.lineinfile:
     path: /etc/default/grub
@@ -8,9 +8,10 @@
   register: cstate_result
   notify:
     - Check grub config
+    - Check cstate on grub.cfg
 
-- name: Install cpuwer tools 
-  ansible.builtin.package: 
+- name: Install cpuwer tools
+  ansible.builtin.package:
     name: linux-tools-generic
     state: present
 
@@ -18,15 +19,15 @@
   stat: 
     path: /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
   register: file_status
-  
+
 - name: Check supported cpufreq governors
-  shell: grep {{ cpu_governor }} /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
+  shell: grep {{ common_cpu_governor }} /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
   register: scaling_governors
   when: file_status.stat.exists
 
 - name: Set cpu governor #1
   ansible.builtin.command: > 
-    cpupower frequency-set -g {{ cpu_governor}}
+    cpupower frequency-set -g {{ common_cpu_governor}}
   register: governor
   when: scaling_governors is changed
   failed_when: governor != 0
@@ -39,6 +40,6 @@
 
 - name: Check current cpu governor
   ansible.builtin.shell: > 
-    cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | uniq | grep {{ cpu_governor}}
-  register: cpu_governor_true
-  failed_when: cpu_governor_true == 0 
+    cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | uniq | grep {{ common_cpu_governor}}
+  register: common_cpu_governor_true
+  failed_when: common_cpu_governor_true == 0

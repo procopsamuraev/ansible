@@ -1,10 +1,6 @@
 # inventory
-encrypted_servers:
+servers:
   hosts:
     server1:
       ansible_port: 8022
       ansible_host: 127.0.0.1
-    vars: 
-      key_encrypted_disk: "RNwhYsxgLHJgC3Zt4kKCCA=="
-      key_encrypted_partition: "oxK0CdENG1PgAZfAgEMSBw=="
-
