@@ -1,6 +1,3 @@
-## How to Run
-2. Run the playbook:
-   ```bash
 
 ## how to run play
 1. Edit the inventory file with the appropriate variables.
