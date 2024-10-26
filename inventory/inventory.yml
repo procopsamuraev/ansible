@@ -2,5 +2,17 @@
 servers:
   hosts:
     server1:
+      ansible_port: 22
+      ansible_host: 18.156.210.222
+    server2:
       ansible_port: 8022
       ansible_host: 127.0.0.1
+      encrypted_disk: "/dev/sdb"           # disk to be encrypted
+      encrypted_partition: "/dev/loop10"   # Partition next to root to be encrypted
+  vars: 
+    encrypted_disk: "/dev/xvdf"                     # disk to be encrypted
+    encrypted_disk_key: "oxK0CdENG1PgAZfAgEMSBw=="  # it shouldnt be here part of passphrase for luks disk encryption
+    encrypted_disk_mount: "/mnt/encrypted_disk"     # Mount point for encrypted partition
+    encrypted_partition: "/dev/xvda14"              # Partition next to root to be encrypted
+    encrypted_partition_key: "oxK0CdENG1PgAZfAgEMSBw=="   # it shouldnt be here part of passphrase for luks partition encryption
+    encrypted_partition_mount: "/mnt/encrypted_partition" # Mount point for encrypted partition

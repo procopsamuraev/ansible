@@ -9,7 +9,7 @@
   ansible.builtin.command:
     cmd: /usr/sbin/update-grub
   register: update_grubs_status
-  changed_when: update_grub_status !=0
+  changed_when: update_grub_status != 0
 
 - name: Check cstate on grub.cfg
   ansible.builtin.lineinfile:
@@ -19,7 +19,7 @@
   register: presense_cstate
   failed_when: presense_cstate.changed
 
-- name: Reload udel
+- name: Reload udev
   ansible.builtin.shell: udevadm control --reload-rules && udevadm trigger
   register: reload_udev_status
-  changed_when: reload_udev_status !=0
+  changed_when: reload_udev_status != 0

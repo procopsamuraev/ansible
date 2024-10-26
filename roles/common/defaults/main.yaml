@@ -1,5 +1,5 @@
 # common/defaults/main.yml
-common_cpu_governor: "performance"       # Desired CPU governor (e.g., performance)
+common_cpu_governor: "performance"       # Desired CPU governor
 common_new_iface_name: "net0"            # New interface name
-common_iface_name: "{{ hostvars[inventory_hostname].ansible_default_ipv4.interface }}"
-common_iface_mac_addr: "{{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress }}"
+common_iface_name: "{{ hostvars[inventory_hostname].ansible_default_ipv4.interface }}" # interface for rename/active iface
+common_iface_mac_addr: "{{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress }}" # macaddres of interface for rename/active iface

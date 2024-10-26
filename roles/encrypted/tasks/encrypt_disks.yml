@@ -1,4 +1,3 @@
-# encrypted/tasks/encrypt_disks.yml
 - name: Install cryptsetup
   ansible.builtin.package:
     name: cryptsetup
@@ -28,11 +27,15 @@
     device: "{{ item.device }}"
     passphrase: "{{ item.pass }}"
     name: "{{ item.name }}"
+    type: "{{ item.type }}"
     state: "opened"
-  no_log: true
+  # no_log: true
   loop:
-    - { name: "encrypted_disk", device: "{{ encrypted_disk }}", pass: "{{ encrypted_disk_key }}{{ encrypted_passphrase_host['content'] | b64decode }}"}
-    - { name: "encrypted_partition", device: "{{ encrypted_partition }}", pass: "{{ encrypted_partition_key }}{{ encrypted_passphrase_host['content'] | b64decode }}"}
+    - { name: "encrypted_disk", type: "luks2", device: "{{ encrypted_disk }}", pass: "{{ encrypted_disk_key }}{{ encrypted_passphrase_host['content'] | b64decode }}"}
+    - { name: "encrypted_partition", type: "luks1", device: "{{ encrypted_partition }}", pass: "{{ encrypted_partition_key }}{{ encrypted_passphrase_host['content'] | b64decode }}"}
+  ignore_errors: true
+  register: create_luks_status
+
 
 - name: Create filesystem on the encrypted disk
   community.general.filesystem:
@@ -41,9 +44,10 @@
   loop:
     - encrypted_disk
     - encrypted_partition
+  ignore_errors: true
 
 - name: Mount the encrypted disk
-  ansible.builtin.mount:
+  ansible.posix.mount:
     path: "{{ item.mount }}"
     src: "/dev/mapper/{{ item.name }}"
     fstype: ext4
@@ -52,9 +56,10 @@
   loop:
     - { name: "encrypted_disk", mount: "{{ encrypted_disk_mount }}", status: "status_encrypted_disk"}
     - { name: "encrypted_partition", mount: "{{ encrypted_partition_mount }}", status: "status_encrypted_partition"}
+  ignore_errors: true
 
 - name: Check luks partitions
-  ansible.builtin.shell: blkid -t TYPE=crypto_LUKS | grep "/dev/sdb\|/dev/loop10"
+  ansible.builtin.shell: lsblk | grep -i crypt
   register: luks_partitions
 
 - name: Display encrypted mounts details

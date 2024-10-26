@@ -15,31 +15,32 @@
     name: linux-tools-generic
     state: present
 
-- name: Check if cpu supports governor
-  stat: 
-    path: /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
-  register: file_status
-
 - name: Check supported cpufreq governors
-  shell: grep {{ common_cpu_governor }} /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
-  register: scaling_governors
-  when: file_status.stat.exists
+  ansible.builtin.command: 'grep {{ common_cpu_governor }} /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors'
+  args:
+    removes:  /sys/devices/system/cpu/cpu-1/cpufreq/scaling_available_governors
+  register: is_governor_supported
+  failed_when: is_governor_supported.rc == 1
 
-- name: Set cpu governor #1
+
+- name: Set cpu governor 1way
   ansible.builtin.command: > 
     cpupower frequency-set -g {{ common_cpu_governor}}
   register: governor
-  when: scaling_governors is changed
+  when: is_governor_supported.rc == 0
   failed_when: governor != 0
   ignore_errors: true
 
-- name: Set cpu to governor #2
+- name: Set cpu to governor 2way
   ansible.builtin.shell: >
     echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+  when: is_governor_supported.rc == 0
+  args: 
+    removes:  /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors
   ignore_errors: true
 
 - name: Check current cpu governor
   ansible.builtin.shell: > 
     cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | uniq | grep {{ common_cpu_governor}}
   register: common_cpu_governor_true
-  failed_when: common_cpu_governor_true == 0
+  failed_when: common_cpu_governor_true.rc == 0

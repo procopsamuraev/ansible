@@ -1,25 +1,39 @@
 # common/tasks/rename_interface.yml
+
+- name: Rename interface with systemd
+  ansible.builtin.template:
+    src: "dev-link.j2"
+    dest: "/etc/systemd/network/10-eth.link"
+
+- name: Rename interface in netplan
+  replace:
+    path: /etc/netplan/50-cloud-init.yaml
+    regexp: "{{ common_iface_name}}"
+    replace: " {{ common_new_iface_name}}"
+  register: netplan_config  
+
+- name: Apply Netplan
+  ansible.builtin.command: netplan apply
+  register: apply_netplan
+  failed_when: apply_netplan.rc != 0
+  when: netplan_config.changed
+
+- name: Install packages
+  ansible.builtin.package:
+    name: iproute2
+    state: present
+
 - name: Update udev rules config
   template:
     src: udev-net-rule.j2
     dest: "/etc/udev/rules.d/70-persistent-net.rules"
-  notify: 
+  notify:
     - Reload udev
 
-- name: Check if interface exists
-  ansible.builtin.shell: >
-    ip link show dev {{ common_new_iface_name}}
-  register: verification
-  changed_when: verification.rc == 1
-  ignore_errors: true
-
 - name: Rename network interface
-  ansible.builtin.shell: >
-    ip link set dev {{ iface_name }} down && ip link set dev {{ iface_name }} name {{ common_new_iface_name }} && ip link set dev {{ common_newiface_name }} up
-  register: rename_result
-  when: verification is changed
-
-# - name: Show renamed interface information
-#   ansible.builtin.command: ip addr show dev {{ common_new_iface_name }}
-#   register: interface_info
-
+  ansible.builtin.shell: |
+    ip link set dev {{ common_iface_name }} down && ip link set dev {{ common_iface_name }} name {{ common_new_iface_name }} && ip link set dev {{ common_new_iface_name }} up && networkctl renew {{ common_new_iface_name}}
+  args:
+    creates: /sys/class/net/{{ common_new_iface_name }}
+    removes: /sys/class/net/{{ common_iface_name }}
+  register: interface_rename_result

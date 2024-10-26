@@ -1,4 +1,11 @@
-# common/tasks/main.yml
-- include_tasks: set_cpu.yml
-- include_tasks: rename_interface.yml
-- include_tasks: display_info.yml
+- name: Include tasks to common role
+  ansible.builtin.include_tasks:
+    file: set_cpu.yml
+
+- name: Include tasks to common role
+  ansible.builtin.include_tasks:
+    file: rename_interface.yml
+
+- name: Include tasks to common role
+  ansible.builtin.include_tasks:
+    file: display_info.yml

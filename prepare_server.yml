@@ -1,7 +1,7 @@
-# playbooks/prepare_server.yml
-- hosts: all
-  #become: yes
-  #become_user: root
+---
+- name: Play for prepare basic servers
+  hosts: all
+  become: true
   roles:
     - encrypted
     - common

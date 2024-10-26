@@ -1,25 +1,22 @@
-# common/tasks/display_info.yml
 
-- name: Display CPU information
+- name: Display Host information
   debug:
-    msg: 
+    msg:
+      - "------- CPU Info -------------"
       - "Host has processor: {{ hostvars[inventory_hostname].ansible_processor }}"
       - "with total cores: {{ hostvars[inventory_hostname].ansible_processor_cores }}"
       - "with threads per core: {{ hostvars[inventory_hostname].ansible_processor_threads_per_core }}"
       - "cpu governor: {{ common_cpu_governor_true.stdout}}"
-
-- name: Display Network information
-  debug:
-    msg: 
-      - "Inteface {{ common_new_iface_name}} - alias {{ hostvars[inventory_hostname].ansible_default_ipv4.alias }}" 
+      - "------- Kernel Info -------------"
+      - "The current cmdline: {{ lookup('ansible.builtin.file', '/proc/cmdline') }}"
+      - "------- Network Info -------------"
+      - "Inteface: {{ common_new_iface_name}} 
+      -  alias {{ hostvars[inventory_hostname].ansible_default_ipv4.alias }}" 
       - "IP: {{ hostvars[inventory_hostname].ansible_default_ipv4.address }}"
       - "NETMASK: {{ hostvars[inventory_hostname].ansible_default_ipv4.netmask}}"
       - "MAC: {{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress}}"
-
-- name: Display encrypted disks information
-  debug:
-    msg: 
-      - Encrypted partitions: "{{ luks_partitions.stdout}}"
+      - "------- Encrypted Disk Info -------------"
+      - "{{ luks_partitions.stdout}}"
 
 # - name: Print all available facts
 #   ansible.builtin.debug:

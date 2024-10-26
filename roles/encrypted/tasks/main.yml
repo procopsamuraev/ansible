@@ -1,2 +1,3 @@
-# encrypted/tasks/main.yml
-- include_tasks: encrypt_disks.yml
+- name: Include tasks to encrypted role
+  ansible.builtin.include_tasks:
+    file: encrypt_disks.yml
