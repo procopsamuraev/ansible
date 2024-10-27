@@ -8,5 +8,5 @@
    ```
 ## todo
 
-- no passnrases as plain text
+- no passphrases as plain text
 - make lint test pass witn no warning
