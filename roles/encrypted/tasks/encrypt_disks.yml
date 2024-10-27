@@ -1,6 +1,8 @@
 - name: Install cryptsetup
   ansible.builtin.package:
-    name: cryptsetup
+    name: 
+      - cryptsetup
+      - openssl
     state: present
 
 - name: Generate host passphrase
@@ -29,7 +31,7 @@
     name: "{{ item.name }}"
     type: "{{ item.type }}"
     state: "opened"
-  # no_log: true
+  no_log: true
   loop:
     - { name: "encrypted_disk", type: "luks2", device: "{{ encrypted_disk }}", pass: "{{ encrypted_disk_key }}{{ encrypted_passphrase_host['content'] | b64decode }}"}
     - { name: "encrypted_partition", type: "luks1", device: "{{ encrypted_partition }}", pass: "{{ encrypted_partition_key }}{{ encrypted_passphrase_host['content'] | b64decode }}"}

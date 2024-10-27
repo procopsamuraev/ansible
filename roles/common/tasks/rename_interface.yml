@@ -9,7 +9,7 @@
   replace:
     path: /etc/netplan/50-cloud-init.yaml
     regexp: "{{ common_iface_name}}"
-    replace: " {{ common_new_iface_name}}"
+    replace: "{{ common_new_iface_name}}"
   register: netplan_config  
 
 - name: Apply Netplan
@@ -18,22 +18,32 @@
   failed_when: apply_netplan.rc != 0
   when: netplan_config.changed
 
-- name: Install packages
-  ansible.builtin.package:
-    name: iproute2
-    state: present
+- name: Netplan status
+  ansible.builtin.command: netplan status
+  register: netplan_status
 
-- name: Update udev rules config
-  template:
-    src: udev-net-rule.j2
-    dest: "/etc/udev/rules.d/70-persistent-net.rules"
-  notify:
-    - Reload udev
+- name: Display netplan status
+  debug: 
+    msg: 
+      - "{{ netplan_config }}"
+      - "{{ netplan_status.stdout }}"
 
-- name: Rename network interface
-  ansible.builtin.shell: |
-    ip link set dev {{ common_iface_name }} down && ip link set dev {{ common_iface_name }} name {{ common_new_iface_name }} && ip link set dev {{ common_new_iface_name }} up && networkctl renew {{ common_new_iface_name}}
-  args:
-    creates: /sys/class/net/{{ common_new_iface_name }}
-    removes: /sys/class/net/{{ common_iface_name }}
-  register: interface_rename_result
+# - name: Install packages
+#   ansible.builtin.package:
+#     name: iproute2
+#     state: present
+# 
+# - name: Update udev rules config
+#   template:
+#     src: udev-net-rule.j2
+#     dest: "/etc/udev/rules.d/70-persistent-net.rules"
+#   notify:
+#     - Reload udev
+# 
+# - name: Rename network interface
+#   ansible.builtin.shell: |
+#     ip link set dev {{ common_iface_name }} down && ip link set dev {{ common_iface_name }} name {{ common_new_iface_name }} && ip link set dev {{ common_new_iface_name }} up && networkctl renew {{ common_new_iface_name}}
+#   args:
+#     creates: /sys/class/net/{{ common_new_iface_name }}
+#     removes: /sys/class/net/{{ common_iface_name }}
+#   register: interface_rename_result
