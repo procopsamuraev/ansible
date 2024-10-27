@@ -1,6 +1,6 @@
 # Ansible Role: common
 
-This role performs CPU configuration, network interface renaming and display system.
+This role performs CPU configuration, network interface renaming and display system information.
 
 ## Tasks
 - `set_cpu`: 
